@@ -1,0 +1,26 @@
+modLoader="javafml"
+loaderVersion="[31,)"
+issueTrackerURL=""
+license="All rights reserved"
+
+[[mods]]
+    modId="examplemod"
+    version="${file.jarVersion}"
+    displayName="Pokécube Example Addon"
+    authors="ExamplesRUS"
+    description='''
+    Example of an addon development environment for pokecube
+    '''
+    
+[[dependencies.examplemod]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="version_mc"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.examplemod]]
+    modId="pokecube"
+    mandatory=true
+    versionRange="version_pokecube"
+    ordering="NONE"
+    side="BOTH"
