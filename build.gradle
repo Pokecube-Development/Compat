@@ -135,6 +135,9 @@ dependencies {
 
     // Curios - Wearables Support
     implementation fg.deobf("curse.maven:curios-${version_curios}")
+
+    // Serene Seasons Support
+    implementation fg.deobf("curse.maven:serene-seasons-${version_sereneseasons}")
     
     //JEI
     // compile against the JEI API but do not include it at runtime
