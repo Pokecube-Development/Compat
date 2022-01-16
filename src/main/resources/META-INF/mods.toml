@@ -4,15 +4,15 @@ issueTrackerURL=""
 license="All rights reserved"
 
 [[mods]]
-    modId="examplemod"
+    modId="pokecube_compat"
     version="${file.jarVersion}"
-    displayName="Pokécube Example Addon"
-    authors="ExamplesRUS"
+    displayName="Pokécube Mod Compat Module"
+    authors="Thutmose"
     description='''
-    Example of an addon development environment for pokecube
+    Extra Cross-Mod Compatiblity for Pokécube
     '''
     
-[[dependencies.examplemod]]
+[[dependencies.pokecube_compat]]
     modId="minecraft"
     mandatory=true
     versionRange="version_mc"
