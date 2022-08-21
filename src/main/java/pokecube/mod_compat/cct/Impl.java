@@ -13,7 +13,7 @@ import pokecube.adventures.blocks.genetics.extractor.ExtractorTile;
 import pokecube.adventures.blocks.genetics.splicer.SplicerTile;
 import pokecube.adventures.blocks.siphon.SiphonTile;
 import pokecube.adventures.blocks.warp_pad.WarpPadTile;
-import pokecube.core.PokecubeCore;
+import pokecube.api.PokecubeAPI;
 import pokecube.core.blocks.tms.TMTile;
 import pokecube.mod_compat.cct.modules.Commander;
 import pokecube.mod_compat.cct.modules.Extractor;
@@ -27,7 +27,7 @@ public class Impl
 
     public static void register()
     {
-        PokecubeCore.LOGGER.info("Registering Pokecube CC Peripherals.");
+        PokecubeAPI.LOGGER.info("Registering Pokecube CC Peripherals.");
         ComputerCraftAPI.registerPeripheralProvider(new PokecubePeripherals());
     }
 

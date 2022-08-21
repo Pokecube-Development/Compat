@@ -1,6 +1,6 @@
 package pokecube.mod_compat.resourcefulbees;
 
-import pokecube.core.PokecubeCore;
+import pokecube.api.PokecubeAPI;
 
 public class Impl
 {
@@ -35,8 +35,8 @@ public class Impl
 //                }
 //                catch (final Exception e)
 //                {
-//                    PokecubeCore.LOGGER.error("ERROR WITH ENTERING APIARY!");
-//                    PokecubeCore.LOGGER.error(e);
+//                    PokecubeAPI.LOGGER.error("ERROR WITH ENTERING APIARY!");
+//                    PokecubeAPI.LOGGER.error(e);
 //                    return false;
 //                }
 //            };
@@ -50,8 +50,8 @@ public class Impl
 //                }
 //                catch (final Exception e)
 //                {
-//                    PokecubeCore.LOGGER.error("ERROR WITH CHECKING APIARY!");
-//                    PokecubeCore.LOGGER.error(e);
+//                    PokecubeAPI.LOGGER.error("ERROR WITH CHECKING APIARY!");
+//                    PokecubeAPI.LOGGER.error(e);
 //                    return false;
 //                }
 //            };
@@ -79,8 +79,8 @@ public class Impl
         }
         catch (final Exception e)
         {
-            PokecubeCore.LOGGER.error("ERROR WITH RESOURCEFULBEES SUPPORT!");
-            PokecubeCore.LOGGER.error(e);
+            PokecubeAPI.LOGGER.error("ERROR WITH RESOURCEFULBEES SUPPORT!");
+            PokecubeAPI.LOGGER.error(e);
         }
 
     }

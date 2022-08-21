@@ -3,8 +3,8 @@ package pokecube.mod_compat.cct.modules;
 import dan200.computercraft.api.lua.LuaException;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import pokecube.api.entity.pokemob.IPokemob;
 import pokecube.core.blocks.tms.TMTile;
-import pokecube.core.interfaces.IPokemob;
 import pokecube.core.items.pokecubes.PokecubeManager;
 
 public class TM extends BasePeripheral<TMTile>

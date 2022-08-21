@@ -3,7 +3,7 @@ package pokecube.mod_compat.resourcefulbees;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
-import pokecube.adventures.events.CompatEvent;
+import pokecube.api.events.init.CompatEvent;
 
 @Mod.EventBusSubscriber
 public class Compat

@@ -6,7 +6,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
-import pokecube.adventures.events.CompatEvent;
+import pokecube.api.events.init.CompatEvent;
 import thut.api.block.flowing.IFlowingBlock;
 
 @Mod.EventBusSubscriber

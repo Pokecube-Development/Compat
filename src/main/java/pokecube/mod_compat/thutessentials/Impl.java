@@ -13,15 +13,15 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
-import pokecube.core.PokecubeCore;
-import pokecube.core.database.spawns.SpawnBiomeMatcher;
-import pokecube.core.database.spawns.SpawnBiomeMatcher.StructureMatcher;
-import pokecube.core.database.spawns.SpawnCheck;
-import pokecube.core.database.spawns.SpawnCheck.MatchResult;
-import pokecube.core.events.pokemob.SpawnCheckEvent;
-import pokecube.core.handlers.TeamManager;
-import pokecube.core.handlers.TeamManager.ITeamProvider;
-import pokecube.core.handlers.events.PCEventsHandler;
+import pokecube.api.PokecubeAPI;
+import pokecube.api.data.spawns.SpawnBiomeMatcher;
+import pokecube.api.data.spawns.SpawnBiomeMatcher.StructureMatcher;
+import pokecube.api.data.spawns.SpawnCheck;
+import pokecube.api.data.spawns.SpawnCheck.MatchResult;
+import pokecube.api.entity.TeamManager;
+import pokecube.api.entity.TeamManager.ITeamProvider;
+import pokecube.api.events.pokemobs.SpawnCheckEvent;
+import pokecube.core.eventhandlers.PCEventsHandler;
 import pokecube.core.utils.PokemobTracker;
 import thut.api.IOwnable;
 import thut.api.OwnableCaps;
@@ -117,7 +117,7 @@ public class Impl
 
     public static void register()
     {
-        PokecubeCore.LOGGER.debug("Registering ThutEssentials Support");
+        PokecubeAPI.LOGGER.debug("Registering ThutEssentials Support");
         MinecraftForge.EVENT_BUS.addListener(EventPriority.LOWEST, false, TeleDestManager::initMatcher);
         MinecraftForge.EVENT_BUS.addListener(EventPriority.LOWEST, false, Impl::init);
         MinecraftForge.EVENT_BUS.addListener(EventPriority.LOWEST, Impl::recallOutMobsOnLogout);

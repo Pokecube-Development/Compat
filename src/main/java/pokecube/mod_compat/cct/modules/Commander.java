@@ -2,8 +2,8 @@ package pokecube.mod_compat.cct.modules;
 
 import dan200.computercraft.api.lua.LuaException;
 import pokecube.adventures.blocks.commander.CommanderTile;
-import pokecube.core.PokecubeCore;
-import pokecube.core.interfaces.pokemob.IHasCommands.Command;
+import pokecube.api.PokecubeAPI;
+import pokecube.api.entity.pokemob.IHasCommands.Command;
 
 public class Commander extends BasePeripheral<CommanderTile>
 {
@@ -33,7 +33,7 @@ public class Commander extends BasePeripheral<CommanderTile>
             }
             catch (final Exception e)
             {
-                PokecubeCore.LOGGER.error("Error setting commander block command via computer", e);
+                PokecubeAPI.LOGGER.error("Error setting commander block command via computer", e);
                 throw new LuaException("Error with settig command");
             }
             return true;
@@ -49,7 +49,7 @@ public class Commander extends BasePeripheral<CommanderTile>
             }
             catch (final Exception e)
             {
-                PokecubeCore.LOGGER.error("Error executing commander block command via computer", e);
+                PokecubeAPI.LOGGER.error("Error executing commander block command via computer", e);
                 throw new LuaException("Error with executing command");
             }
             return true;

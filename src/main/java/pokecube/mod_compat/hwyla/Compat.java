@@ -10,11 +10,12 @@ import mcp.mobius.waila.api.WailaPlugin;
 import mcp.mobius.waila.api.config.IPluginConfig;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
+import pokecube.api.PokecubeAPI;
+import pokecube.api.entity.pokemob.IPokemob;
+import pokecube.api.entity.pokemob.PokemobCaps;
 import pokecube.core.PokecubeCore;
 import pokecube.core.client.render.mobs.overlays.Health;
 import pokecube.core.entity.pokemobs.EntityPokemob;
-import pokecube.core.interfaces.IPokemob;
-import pokecube.core.interfaces.capabilities.CapabilityPokemob;
 
 @WailaPlugin(value = PokecubeCore.MODID)
 public class Compat implements IWailaPlugin
@@ -23,7 +24,7 @@ public class Compat implements IWailaPlugin
     @Override
     public void register(final IRegistrar registrar)
     {
-        PokecubeCore.LOGGER.debug("Attempting WAILA support?");
+        PokecubeAPI.LOGGER.debug("Attempting WAILA support?");
         registrar.registerComponentProvider(HUDHandlerMobs.INSTANCE, TooltipPosition.HEAD, EntityPokemob.class);
     }
 
@@ -36,7 +37,7 @@ public class Compat implements IWailaPlugin
                 final IPluginConfig config)
         {
             final Entity mob = accessor.getEntity();
-            final IPokemob pokemob = CapabilityPokemob.getPokemobFor(mob);
+            final IPokemob pokemob = PokemobCaps.getPokemobFor(mob);
 
             if (pokemob != null && Health.obfuscateName(pokemob))
             {

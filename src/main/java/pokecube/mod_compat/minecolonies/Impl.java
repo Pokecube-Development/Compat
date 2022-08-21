@@ -15,9 +15,9 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event.Result;
 import pokecube.adventures.capabilities.utils.TypeTrainer;
-import pokecube.adventures.events.TrainerInteractEvent.CanInteract;
-import pokecube.core.PokecubeCore;
-import pokecube.core.world.terrain.PokecubeTerrainChecker;
+import pokecube.api.PokecubeAPI;
+import pokecube.api.events.npcs.TrainerInteractEvent.CanInteract;
+import pokecube.world.terrain.PokecubeTerrainChecker;
 import thut.api.maths.Vector3;
 import thut.api.terrain.BiomeType;
 import thut.api.terrain.TerrainSegment;
@@ -26,7 +26,7 @@ import thut.api.terrain.TerrainSegment.ISubBiomeChecker;
 public class Impl
 {
     private static IMinecoloniesAPI instance;
-    private static Set<String>      logged = Sets.newHashSet();
+    private static Set<String> logged = Sets.newHashSet();
 
     public static void register()
     {
@@ -34,8 +34,7 @@ public class Impl
         Impl.instance = IMinecoloniesAPI.getInstance();
 
         // Register the type mapper for minecolonies citizens
-        TypeTrainer.registerTypeMapper((mob, spawn) ->
-        {
+        TypeTrainer.registerTypeMapper((mob, spawn) -> {
             return mob instanceof AbstractEntityCitizen ? TypeTrainer.merchant : null;
         });
 
@@ -54,8 +53,9 @@ public class Impl
             final AbstractEntityCitizen cit = (AbstractEntityCitizen) event.action.holder;
             // Now we check if the citizen's colony considers the player
             // "important", if so, then allow.
-            if (cit.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers().contains(event
-                    .getEntityLiving())) event.setResult(Result.ALLOW);
+            if (cit.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers()
+                    .contains(event.getEntityLiving()))
+                event.setResult(Result.ALLOW);
         }
     }
 
@@ -78,21 +78,16 @@ public class Impl
             if (caveAdjusted) if (world.getChunkSource() instanceof ServerChunkCache)
             {
                 if (!Impl.instance.getColonyManager().isCoordinateInAnyColony(rworld, v.getPos())) break check;
-
                 final IColony colony = Impl.instance.getColonyManager().getClosestColony(rworld, v.getPos());
-                if (colony == null || colony.getBuildingManager() == null || colony.getBuildingManager()
-                        .getBuildings() == null) break check;
+                if (colony == null || colony.getBuildingManager() == null
+                        || colony.getBuildingManager().getBuildings() == null)
+                    break check;
                 // final Vec3 vec = new Vec3(v.x, v.y, v.z);
                 for (final IBuilding b : colony.getBuildingManager().getBuildings().values())
                 {
                     String type = b.getSchematicName();
                     type = type.toLowerCase(Locale.ROOT);
-                    if (Impl.logged.add(type)) PokecubeCore.LOGGER.info("Minecolonies Structure: " + type);
-                    if (PokecubeTerrainChecker.structureSubbiomeMap.containsKey(type))
-                        type = PokecubeTerrainChecker.structureSubbiomeMap.get(type);
-                    else continue;
-
-                    // final AABB box = b.getTargetableArea(colony.getWorld());
+                    if (Impl.logged.add(type)) PokecubeAPI.LOGGER.info("Minecolonies Structure: " + type);
                     if (b.isInBuilding(v.getPos())) return BiomeType.getBiome(type, true);
                 }
             }
