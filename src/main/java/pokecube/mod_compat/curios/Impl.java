@@ -130,7 +130,7 @@ public class Impl
         {
             final String identifier = event.getIdentifier();
             if (!CuriosChecker.identMap.containsKey(identifier)) return;
-            final LivingEntity mob = event.getEntityLiving();
+            final LivingEntity mob = event.getEntity();
             final int index = event.getSlotIndex();
             final EnumWearable slot = CuriosChecker.identMap.get(identifier);
             final ItemStack to = event.getTo();

@@ -11,7 +11,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent;
-import net.minecraftforge.event.world.ChunkEvent;
+import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import pokecube.api.PokecubeAPI;
 import pokecube.api.data.spawns.SpawnBiomeMatcher;
@@ -43,8 +43,8 @@ public class Impl
             if (matcher._validStructures.isEmpty()) return MatchResult.PASS;
             if (checker.world instanceof ServerLevel)
             {
-                final LazyOptional<IHasStructures> opt = ((ServerLevel) checker.world).getCapability(
-                        WorldStructures.CAPABILITY);
+                final LazyOptional<IHasStructures> opt = ((ServerLevel) checker.world)
+                        .getCapability(WorldStructures.CAPABILITY);
                 if (opt.isPresent())
                 {
                     final IHasStructures holder = opt.orElseGet(null);
@@ -132,19 +132,17 @@ public class Impl
 
     public static void recallOutMobsOnLogout(final PlayerLoggedOutEvent event)
     {
-        if (!(event.getPlayer().getLevel() instanceof ServerLevel)) return;
-        final ServerLevel world = (ServerLevel) event.getPlayer().getLevel();
+        if (!(event.getEntity().getLevel() instanceof ServerLevel world)) return;
         if (!Essentials.config.versioned_dim_keys.contains(world.dimension().location())) return;
-        final List<Entity> mobs = PokemobTracker.getMobs(event.getPlayer(), e -> Essentials.config.versioned_dim_keys
-                .contains(e.getLevel().dimension().location()));
+        final List<Entity> mobs = PokemobTracker.getMobs(event.getEntity(),
+                e -> Essentials.config.versioned_dim_keys.contains(e.getLevel().dimension().location()));
         PCEventsHandler.recallAll(mobs, true);
     }
 
     public static void recallOutMobsOnUnload(final ChunkEvent.Unload event)
     {
-        if (event.getWorld() == null || event.getWorld().isClientSide()) return;
-        if (!(event.getWorld() instanceof ServerLevel && event.getChunk() instanceof LevelChunk)) return;
-        final ServerLevel world = (ServerLevel) event.getWorld();
+        if (event.getLevel() == null || event.getLevel().isClientSide()) return;
+        if (!(event.getLevel() instanceof ServerLevel world && event.getChunk() instanceof LevelChunk)) return;
         if (!Essentials.config.versioned_dim_keys.contains(world.dimension().location())) return;
         // FIXME decide on how to best deal with this, now that EntitySections
         // are separate!

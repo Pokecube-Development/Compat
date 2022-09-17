@@ -54,7 +54,7 @@ public class Impl
             // Now we check if the citizen's colony considers the player
             // "important", if so, then allow.
             if (cit.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers()
-                    .contains(event.getEntityLiving()))
+                    .contains(event.getEntity()))
                 event.setResult(Result.ALLOW);
         }
     }

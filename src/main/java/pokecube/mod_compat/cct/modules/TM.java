@@ -1,11 +1,11 @@
 package pokecube.mod_compat.cct.modules;
 
 import dan200.computercraft.api.lua.LuaException;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import pokecube.api.entity.pokemob.IPokemob;
 import pokecube.core.blocks.tms.TMTile;
 import pokecube.core.items.pokecubes.PokecubeManager;
+import thut.api.ThutCaps;
 
 public class TM extends BasePeripheral<TMTile>
 {
@@ -17,7 +17,7 @@ public class TM extends BasePeripheral<TMTile>
         public Provider(final TMTile tile)
         {
             this.tile = tile;
-            this.inventory = (IItemHandlerModifiable) tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+            this.inventory = (IItemHandlerModifiable) tile.getCapability(ThutCaps.ITEM_HANDLER)
                     .orElse(null);
         }
 

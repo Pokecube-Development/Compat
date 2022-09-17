@@ -9,16 +9,16 @@ import dan200.computercraft.api.lua.LuaException;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import pokecube.adventures.blocks.genetics.extractor.ExtractorTile;
 import pokecube.adventures.blocks.genetics.helper.ClonerHelper;
 import pokecube.adventures.blocks.genetics.helper.recipe.RecipeSelector;
 import pokecube.adventures.blocks.genetics.helper.recipe.RecipeSelector.SelectorValue;
+import thut.api.ThutCaps;
 import thut.api.entity.genetics.Alleles;
 import thut.api.entity.genetics.Gene;
 import thut.api.entity.genetics.IMobGenetics;
@@ -33,7 +33,7 @@ public class Extractor extends BasePeripheral<ExtractorTile>
         public Provider(final ExtractorTile tile)
         {
             this.tile = tile;
-            this.inventory = (IItemHandlerModifiable) tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+            this.inventory = (IItemHandlerModifiable) tile.getCapability(ThutCaps.ITEM_HANDLER)
                     .orElse(null);
         }
 
@@ -98,7 +98,7 @@ public class Extractor extends BasePeripheral<ExtractorTile>
             newSelector.getTag().put("pages", pages);
             value = RecipeSelector.getSelectorValue(this.tile.getItem(1));
             newSelector.getTag().put(ClonerHelper.SELECTORTAG, value.save());
-            newSelector.setHoverName(new TextComponent("Selector"));
+            newSelector.setHoverName(Component.literal("Selector"));
             this.tile.override_selector = newSelector;
             return true;
         }
