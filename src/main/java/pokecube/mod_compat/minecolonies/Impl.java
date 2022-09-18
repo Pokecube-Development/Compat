@@ -72,13 +72,12 @@ public class Impl
         public BiomeType getSubBiome(final LevelAccessor world, final Vector3 v, final TerrainSegment segment,
                 final boolean caveAdjusted)
         {
-            if (!(world instanceof Level)) return BiomeType.NONE;
-            final Level rworld = (Level) world;
+            if (!(world instanceof Level level)) return BiomeType.NONE;
             check:
             if (caveAdjusted) if (world.getChunkSource() instanceof ServerChunkCache)
             {
-                if (!Impl.instance.getColonyManager().isCoordinateInAnyColony(rworld, v.getPos())) break check;
-                final IColony colony = Impl.instance.getColonyManager().getClosestColony(rworld, v.getPos());
+                if (!Impl.instance.getColonyManager().isCoordinateInAnyColony(level, v.getPos())) break check;
+                final IColony colony = Impl.instance.getColonyManager().getClosestColony(level, v.getPos());
                 if (colony == null || colony.getBuildingManager() == null
                         || colony.getBuildingManager().getBuildings() == null)
                     break check;
