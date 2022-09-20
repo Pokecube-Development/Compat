@@ -105,13 +105,16 @@ dependencies {
     implementation fg.deobf("curse.maven:jei-${version_jei}")
     
     //Journeymap
-    implementation fg.deobf("curse.maven:journeymap-${version_journeymap}")
+    //implementation fg.deobf("curse.maven:journeymap-${version_journeymap}")
     
     // Serene Seasons Support
     implementation fg.deobf("curse.maven:sereneseasons-${version_sereneseasons}")
     
     //Thut Essentials
     implementation fg.deobf("curse.maven:thutessentials-${version_thutessentials}")
+    
+    // Beyond Earth
+    implementation fg.deobf("curse.maven:beyond_earth-${version_beyond_earth}")
     
     //Minecolonies
     implementation "blank:minecolonies-1.19.1-1.0.933-BETA-api"
