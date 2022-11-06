@@ -114,7 +114,7 @@ dependencies {
     implementation fg.deobf("curse.maven:thutessentials-${version_thutessentials}")
     
     // Beyond Earth
-    implementation fg.deobf("curse.maven:beyond_earth-${version_beyond_earth}")
+    //implementation fg.deobf("curse.maven:beyond_earth-${version_beyond_earth}")
     
     //Minecolonies
     implementation "blank:minecolonies-1.19.1-1.0.933-BETA-api"

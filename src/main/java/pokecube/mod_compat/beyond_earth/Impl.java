@@ -11,7 +11,6 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.mrscauthd.beyond_earth.events.Methods;
 import pokecube.api.data.PokedexEntry;
 import pokecube.api.entity.pokemob.IPokemob;
 import pokecube.api.entity.pokemob.PokemobCaps;
@@ -51,7 +50,7 @@ public class Impl
         }
         else if (here.location().toString().equals("minecraft:overworld") && riding.getY() > 500)
         {
-            other = Methods.earth_orbit;
+//            other = Methods.earth_orbit;
             newY = 100;
         }
         if (other != null && newY != -1)
