@@ -4,7 +4,7 @@ import dan200.computercraft.api.lua.LuaException;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import pokecube.adventures.blocks.warp_pad.WarpPadTile;
-import thut.api.entity.ThutTeleporter.TeleDest;
+import thut.api.entity.teleporting.TeleDest;
 import thut.api.maths.Vector3;
 
 public class Warppad extends BasePeripheral<WarpPadTile>
