@@ -16,8 +16,8 @@ import pokecube.api.data.PokedexEntry;
 import pokecube.api.entity.pokemob.IPokemob;
 import pokecube.api.entity.pokemob.PokemobCaps;
 import pokecube.core.database.Database;
-import thut.api.entity.ThutTeleporter;
-import thut.api.entity.ThutTeleporter.TeleDest;
+import thut.api.entity.teleporting.TeleDest;
+import thut.api.entity.teleporting.ThutTeleporter;
 
 public class Impl
 {
