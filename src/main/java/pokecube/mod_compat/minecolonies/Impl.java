@@ -18,10 +18,10 @@ import pokecube.adventures.capabilities.utils.TypeTrainer;
 import pokecube.api.PokecubeAPI;
 import pokecube.api.events.npcs.TrainerInteractEvent.CanInteract;
 import pokecube.world.terrain.PokecubeTerrainChecker;
+import thut.api.level.terrain.BiomeType;
+import thut.api.level.terrain.TerrainSegment;
+import thut.api.level.terrain.TerrainSegment.ISubBiomeChecker;
 import thut.api.maths.Vector3;
-import thut.api.terrain.BiomeType;
-import thut.api.terrain.TerrainSegment;
-import thut.api.terrain.TerrainSegment.ISubBiomeChecker;
 
 public class Impl
 {
