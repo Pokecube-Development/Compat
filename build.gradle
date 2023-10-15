@@ -23,9 +23,6 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'org.spongepowered.mixin'
 
-eclipseJdtApt.enabled = false
-eclipseFactoryPath.enabled = false
-
 ext {
     VERSION_COMPILE = "${version_compile}"
     // Force a refresh of the toml file
