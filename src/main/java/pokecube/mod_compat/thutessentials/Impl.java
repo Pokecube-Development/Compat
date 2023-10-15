@@ -17,10 +17,10 @@ import pokecube.api.PokecubeAPI;
 import pokecube.api.data.spawns.SpawnBiomeMatcher;
 import pokecube.api.data.spawns.SpawnCheck;
 import pokecube.api.data.spawns.SpawnCheck.MatchResult;
-import pokecube.api.data.spawns.StructureMatcher;
+import pokecube.api.data.spawns.matchers.MatcherLoaders;
+import pokecube.api.data.spawns.matchers.Structures;
 import pokecube.api.entity.TeamManager;
 import pokecube.api.entity.TeamManager.ITeamProvider;
-import pokecube.api.events.pokemobs.SpawnCheckEvent;
 import pokecube.core.eventhandlers.PCEventsHandler;
 import pokecube.core.utils.PokemobTracker;
 import thut.api.IOwnable;
@@ -35,11 +35,13 @@ import thut.essentials.util.world.WorldStructures;
 
 public class Impl
 {
-    private static class StructChecker implements StructureMatcher
+    private static class StructChecker extends Structures
     {
         @Override
-        public MatchResult structuresMatch(final SpawnBiomeMatcher matcher, final SpawnCheck checker)
+        public MatchResult _matches(final SpawnBiomeMatcher matcher, final SpawnCheck checker)
         {
+            MatchResult root = super._matches(matcher, checker);
+            if (root == MatchResult.SUCCEED) return root;
             if (matcher._validStructures.isEmpty()) return MatchResult.PASS;
             if (checker.world instanceof ServerLevel)
             {
@@ -119,15 +121,10 @@ public class Impl
     {
         PokecubeAPI.LOGGER.debug("Registering ThutEssentials Support");
         MinecraftForge.EVENT_BUS.addListener(EventPriority.LOWEST, false, TeleDestManager::initMatcher);
-        MinecraftForge.EVENT_BUS.addListener(EventPriority.LOWEST, false, Impl::init);
         MinecraftForge.EVENT_BUS.addListener(EventPriority.LOWEST, Impl::recallOutMobsOnLogout);
         MinecraftForge.EVENT_BUS.addListener(EventPriority.LOWEST, Impl::recallOutMobsOnUnload);
+        MatcherLoaders.matchClasses.put("structure", StructChecker.class);
         TeamManager.provider = new TeamProvider(TeamManager.provider);
-    }
-
-    public static void init(final SpawnCheckEvent.Init event)
-    {
-        event.matcher._structs = StructureMatcher.or(new StructChecker(), event.matcher._structs);
     }
 
     public static void recallOutMobsOnLogout(final PlayerLoggedOutEvent event)
