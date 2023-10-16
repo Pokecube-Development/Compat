@@ -34,14 +34,14 @@ public class Impl
     @SubscribeEvent
     public static void toOrbit(final PlayerTickEvent event)
     {
-        final Level tworld = event.player.getLevel();
+        final Level tworld = event.player.level();
         if (!(tworld instanceof ServerLevel level)) return;
 
         final Entity riding = event.player.getRootVehicle();
         final IPokemob pokemob = PokemobCaps.getPokemobFor(riding);
         if (pokemob == null || pokemob.getPokedexEntry() != megaray) return;
         ResourceKey<Level> other = null;
-        ResourceKey<Level> here = riding.getLevel().dimension();
+        ResourceKey<Level> here = riding.level().dimension();
         int newY = -1;
         if (here.location().getPath().contains("earth_orbit") && riding.getY() < 20)
         {

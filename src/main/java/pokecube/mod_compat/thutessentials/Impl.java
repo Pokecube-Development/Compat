@@ -50,7 +50,7 @@ public class Impl
                 if (opt.isPresent())
                 {
                     final IHasStructures holder = opt.orElseGet(null);
-                    final Collection<ResourceLocation> hits = holder.getStructures(checker.location.getPos());
+                    final Collection<ResourceLocation> hits = holder.getStructures(checker.pos);
                     for (final ResourceLocation hit : hits)
                         if (matcher._validStructures.contains(hit.toString())) return MatchResult.SUCCEED;
                 }
@@ -71,7 +71,7 @@ public class Impl
         @Override
         public String getTeam(final Entity entityIn)
         {
-            if (entityIn.getLevel().isClientSide) return "";
+            if (entityIn.level().isClientSide) return "";
             final IOwnable ownable = OwnableCaps.getOwnable(entityIn);
             UUID id = ownable != null ? ownable.getOwnerId() : null;
             if (id == null) id = entityIn.getUUID();
@@ -129,10 +129,10 @@ public class Impl
 
     public static void recallOutMobsOnLogout(final PlayerLoggedOutEvent event)
     {
-        if (!(event.getEntity().getLevel() instanceof ServerLevel world)) return;
+        if (!(event.getEntity().level() instanceof ServerLevel world)) return;
         if (!Essentials.config.versioned_dim_keys.contains(world.dimension().location())) return;
         final List<Entity> mobs = PokemobTracker.getMobs(event.getEntity(),
-                e -> Essentials.config.versioned_dim_keys.contains(e.getLevel().dimension().location()));
+                e -> Essentials.config.versioned_dim_keys.contains(e.level().dimension().location()));
         PCEventsHandler.recallAll(mobs, true);
     }
 

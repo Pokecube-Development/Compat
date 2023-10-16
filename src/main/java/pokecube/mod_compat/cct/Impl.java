@@ -1,6 +1,6 @@
 package pokecube.mod_compat.cct;
 
-import dan200.computercraft.api.ComputerCraftAPI;
+import dan200.computercraft.api.ForgeComputerCraftAPI;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheralProvider;
 import net.minecraft.core.BlockPos;
@@ -28,7 +28,7 @@ public class Impl
     public static void register()
     {
         PokecubeAPI.LOGGER.info("Registering Pokecube CC Peripherals.");
-        ComputerCraftAPI.registerPeripheralProvider(new PokecubePeripherals());
+        ForgeComputerCraftAPI.registerPeripheralProvider(new PokecubePeripherals());
     }
 
     public static class PokecubePeripherals implements IPeripheralProvider

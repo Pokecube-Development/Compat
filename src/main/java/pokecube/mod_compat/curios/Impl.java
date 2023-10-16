@@ -25,6 +25,7 @@ import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
 import top.theillusivec4.curios.api.type.inventory.IDynamicStackHandler;
 
+@SuppressWarnings("removal")
 public class Impl
 {
     public static class CuriosChecker implements IWearableChecker
@@ -165,6 +166,7 @@ public class Impl
         EnumWearable.registerWearableChecker(CuriosChecker.INSTANCE);
     }
 
+    @SuppressWarnings({ "deprecation" })
     public static void onIMC(final InterModEnqueueEvent event)
     {
         for (final String type : CuriosChecker.identMap.keySet())
