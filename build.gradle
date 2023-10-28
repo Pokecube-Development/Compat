@@ -103,7 +103,7 @@ dependencies {
     implementation fg.deobf("curse.maven:curios-${version_curios}")
     
     //WHYLA
-    //implementation fg.deobf("curse.maven:jade-${version_jade}")
+    implementation fg.deobf("curse.maven:jade-${version_jade}")
     
     //JEI
     implementation fg.deobf("curse.maven:jei-${version_jei}")

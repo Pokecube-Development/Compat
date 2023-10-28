@@ -16,12 +16,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.Brain;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import pokecube.api.PokecubeAPI;
@@ -32,21 +31,21 @@ import pokecube.api.entity.pokemob.IPokemob;
 import pokecube.api.entity.pokemob.PokemobCaps;
 import pokecube.api.entity.pokemob.ai.AIRoutine;
 import pokecube.api.events.pokemobs.InitAIEvent;
+import pokecube.api.utils.PokeType;
 import pokecube.core.ai.brain.MemoryModules;
-import pokecube.core.ai.logic.LogicFloatFlySwim;
 import pokecube.core.ai.logic.LogicInLiquid;
 import pokecube.core.ai.logic.LogicInMaterials;
 import pokecube.core.ai.logic.LogicMiscUpdate;
 import pokecube.core.ai.logic.LogicMovesUpdates;
 import pokecube.core.database.Database;
-import pokecube.core.impl.capabilities.impl.PokemobOwned;
+import pokecube.core.impl.capabilities.impl.PokemobSaves;
 import pokecube.core.utils.CapHolders;
 import pokecube.mod_compat.cobblemon.cobblemobs.ai.Tasks;
 import thut.api.ThutCaps;
 import thut.api.entity.ai.IAIRunnable;
 import thut.core.common.ThutCore;
 
-public abstract class CobbleBase extends PokemobOwned implements ICapabilityProvider
+public abstract class CobbleBase extends PokemobSaves implements ICapabilitySerializable<CompoundTag>
 {
     private final LazyOptional<IPokemob> holder = LazyOptional.of(() -> this);
     private Pokemon cobbled;
@@ -64,6 +63,8 @@ public abstract class CobbleBase extends PokemobOwned implements ICapabilityProv
         {
             cobbleEntry = new PokedexEntry(0, "cobble_missingno", true);
             cobbleEntry.stock = false;
+            cobbleEntry.type1 = PokeType.unknown;
+            cobbleEntry.type2 = PokeType.unknown;
             PokedexEntry base = Database.missingno;
             if (base != null)
             {
@@ -80,6 +81,8 @@ public abstract class CobbleBase extends PokemobOwned implements ICapabilityProv
         if (this.cobbled == null)
         {
             this.cobbled = new Pokemon();
+            System.out.println("New cobbled??");
+            Thread.dumpStack();
             return cobbled;
         }
         String name = "cobble_" + cobbled.getSpecies().getName();
@@ -89,13 +92,16 @@ public abstract class CobbleBase extends PokemobOwned implements ICapabilityProv
             if (cobbleEntry == null)
             {
                 cobbleEntry = new PokedexEntry(0, name, true);
+                cobbleEntry.type1 = PokeType.unknown;
+                cobbleEntry.type2 = PokeType.unknown;
                 cobbleEntry.stock = false;
+            }
+            if (cobbleEntry.getBaseForme() == null)
+            {
                 PokedexEntry base = Database.getEntry(cobbled.getSpecies().getName());
-                if (base != null)
-                {
-                    cobbleEntry.setBaseForme(base);
-                    base.copyToForm(cobbleEntry);
-                }
+                if (base == null) base = Database.missingno;
+                cobbleEntry.setBaseForme(base);
+                base.copyToForm(cobbleEntry);
             }
         }
         return cobbled;
@@ -124,7 +130,6 @@ public abstract class CobbleBase extends PokemobOwned implements ICapabilityProv
         if (brain.checkMemory(MemoryModules.ATTACKTARGET.get(), MemoryStatus.REGISTERED)) return;
 
         final Mob entity = this.getEntity();
-        final PokedexEntry entry = this.getPokedexEntry();
 
         this.guardCap = entity.getCapability(CapHolders.GUARDAI_CAP).orElse(null);
         this.genes = entity.getCapability(ThutCaps.GENETICS_CAP).orElse(null);
@@ -142,7 +147,6 @@ public abstract class CobbleBase extends PokemobOwned implements ICapabilityProv
         this.getTickLogic().add(new LogicInLiquid(this));
         this.getTickLogic().add(new LogicMovesUpdates(this));
         this.getTickLogic().add(new LogicInMaterials(this));
-        if (entry.stock) this.getTickLogic().add(new LogicFloatFlySwim(this));
         this.getTickLogic().add(new LogicMiscUpdate(this));
 
         // If the mob was constructed without a world somehow (during init for
@@ -152,9 +156,6 @@ public abstract class CobbleBase extends PokemobOwned implements ICapabilityProv
             if (entity.level() != null) PokecubeAPI.POKEMOB_BUS.post(new InitAIEvent.Post(this));
             return;
         }
-
-        // DOLATER decide on speed scaling here?
-        if (entry.stock) entity.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.2F);
 
         this.tasks = Lists.newArrayList();
         Tasks.initBrain(brain);
@@ -260,7 +261,7 @@ public abstract class CobbleBase extends PokemobOwned implements ICapabilityProv
     {
         return this.entity;
     }
-    
+
     @Override
     public int getStat(Stats stat, boolean modified)
     {
@@ -274,7 +275,7 @@ public abstract class CobbleBase extends PokemobOwned implements ICapabilityProv
             return 5;
         }
     }
-    
+
     @Override
     public int getBaseStat(Stats stat)
     {
@@ -284,7 +285,7 @@ public abstract class CobbleBase extends PokemobOwned implements ICapabilityProv
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            System.out.println(this.getPokedexEntry().getBaseForme()+" "+e);
             return 5;
         }
     }
@@ -298,20 +299,40 @@ public abstract class CobbleBase extends PokemobOwned implements ICapabilityProv
         {
             cobbleEntry = new PokedexEntry(0, name, true);
             cobbleEntry.stock = false;
-            PokedexEntry base = Database.getEntry(name.replaceFirst("cobble_", ""));
-            if (base != null)
-            {
-                cobbleEntry.setBaseForme(base);
-                base.copyToForm(cobbleEntry);
-            }
         }
+        PokedexEntry base = Database.getEntry(name.replaceFirst("cobble_", ""));
+        if (base != null)
+        {
+            cobbleEntry.setBaseForme(base);
+            base.copyToForm(cobbleEntry);
+        }
+        if (arg0.contains("Pokemon"))
+        {
+            CompoundTag pokemon = arg0.getCompound("Pokemon");
+            cobblemon.getPokemon().loadFromNBT(pokemon);
+            cobblemon.setPersistenceRequired();
+        }
+        super.read(arg0);
+    }
+
+    @Override
+    public CompoundTag serializeNBT()
+    {
+        return this.write();
+    }
+
+    @Override
+    public void deserializeNBT(CompoundTag nbt)
+    {
+        this.read(nbt);
     }
 
     @Override
     public CompoundTag write()
     {
-        CompoundTag tag = new CompoundTag();
+        CompoundTag tag = super.write();
         tag.putString("pokedexentry", this.getPokedexEntry().name);
+        tag.put("Pokemon", this.getCobbled().saveToNBT(new CompoundTag()));
         return tag;
     }
 

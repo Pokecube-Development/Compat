@@ -10,13 +10,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.behavior.Behavior;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;
-import net.minecraft.world.entity.ai.behavior.InteractWithDoor;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.SensorType;
 import pokecube.api.PokecubeAPI;
-import pokecube.api.data.PokedexEntry;
 import pokecube.api.entity.pokemob.IPokemob;
-import pokecube.api.entity.pokemob.ai.AIRoutine;
 import pokecube.api.events.pokemobs.InitAIEvent.Init;
 import pokecube.core.PokecubeCore;
 import pokecube.core.ai.brain.MemoryModules;
@@ -29,10 +26,12 @@ import pokecube.core.ai.tasks.combat.management.ForgetTargetTask;
 import pokecube.core.ai.tasks.combat.movement.CicleTask;
 import pokecube.core.ai.tasks.combat.movement.DodgeTask;
 import pokecube.core.ai.tasks.combat.movement.LeapTask;
-import pokecube.core.ai.tasks.misc.LookAtTask;
-import pokecube.core.ai.tasks.misc.RunAway;
-import pokecube.core.ai.tasks.misc.SwimTask;
+import pokecube.core.ai.tasks.idle.ForgetHuntedByTask;
+import pokecube.core.ai.tasks.misc.FollowOwnerTask;
 import pokecube.core.ai.tasks.misc.WalkToTask;
+import pokecube.core.ai.tasks.utility.GatherTask;
+import pokecube.core.ai.tasks.utility.StoreTask;
+import pokecube.core.ai.tasks.utility.UseMoveTask;
 import thut.api.entity.ai.BrainUtil;
 import thut.api.entity.ai.IAIRunnable;
 
@@ -69,10 +68,12 @@ public class Tasks
 
         final List<Pair<Integer, ? extends BehaviorControl<? super LivingEntity>>> list = Lists.newArrayList();
 
+        // Owner related tasks
+        // Follow owner around
+        aiList.add(new FollowOwnerTask(pokemob, 3, 8));
         // This one is outside as most things don't get this task.
         task = new WalkToTask(200);
         list.add(Pair.of(1, (Behavior<? super LivingEntity>) task));
-        if (pokemob.isRoutineEnabled(AIRoutine.USEDOORS)) list.add(Pair.of(0, InteractWithDoor.create()));
 
         // Send the event to let anyone edit the tasks if needed.
         PokecubeAPI.POKEMOB_BUS.post(new Init(pokemob, Init.Type.IDLE, aiList));
@@ -93,8 +94,6 @@ public class Tasks
     {
         // Tasks for combat
         final List<IAIRunnable> aiList = Lists.newArrayList();
-
-        final PokedexEntry entry = pokemob.getPokedexEntry();
 
         // combat tasks
         aiList.add(new SelectMoveTask(pokemob));
@@ -117,18 +116,6 @@ public class Tasks
         pokemob.setTargetFinder(targetFind);
 
         final List<Pair<Integer, ? extends BehaviorControl<? super LivingEntity>>> list = Lists.newArrayList();
-        if (entry.stock)
-        {
-            Behavior<?> task = new LookAtTask(45, 90);
-            list.add(Pair.of(1, (Behavior<? super LivingEntity>) task));
-
-            task = new RunAway(MemoryModules.HUNTED_BY.get(), 1.5f);
-            list.add(Pair.of(1, (Behavior<? super LivingEntity>) task));
-
-            task = new SwimTask(pokemob, 0.8F);
-            list.add(Pair.of(0, (Behavior<? super LivingEntity>) task));
-        }
-        if (pokemob.isRoutineEnabled(AIRoutine.USEDOORS)) list.add(Pair.of(0, InteractWithDoor.create()));
         // Send the event to let anyone edit the tasks if needed.
         PokecubeAPI.POKEMOB_BUS.post(new Init(pokemob, Init.Type.COMBAT, aiList));
 
@@ -150,6 +137,18 @@ public class Tasks
         final List<Pair<Integer, ? extends BehaviorControl<? super LivingEntity>>> list = Lists.newArrayList();
         final List<IAIRunnable> aiList = Lists.newArrayList();
         Behavior<?> task;
+
+        // combat tasks
+        final StoreTask ai = new StoreTask(pokemob);
+        // Store things in chests
+        aiList.add(ai);
+        // Gather things from ground
+        aiList.add(new GatherTask(pokemob, 32, ai));
+        // Execute moves when told to
+        aiList.add(new UseMoveTask(pokemob));
+        // forget we were being hunted
+        aiList.add(new ForgetHuntedByTask(pokemob, 100));
+
         task = new WalkToTask(200);
         list.add(Pair.of(1, (Behavior<? super LivingEntity>) task));
         // Send the event to let anyone edit the tasks if needed.
