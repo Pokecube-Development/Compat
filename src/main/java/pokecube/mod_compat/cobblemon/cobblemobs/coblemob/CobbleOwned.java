@@ -8,14 +8,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import thut.api.world.mobs.data.DataSync;
 import thut.core.common.ThutCore;
-import thut.core.common.world.mobs.data.types.Data_UUID;
 
 public abstract class CobbleOwned extends CobbleBase
 {
-    private int OWNERID;
-
     LivingEntity ownerMob;
 
     boolean playerOwned = false;
@@ -23,13 +19,6 @@ public abstract class CobbleOwned extends CobbleBase
     public CobbleOwned(PokemonEntity mob)
     {
         super(mob);
-    }
-
-    @Override
-    public void setDataSync(DataSync sync)
-    {
-        super.setDataSync(sync);
-        OWNERID = sync.register(new Data_UUID(), null);
     }
 
     @Override
@@ -52,7 +41,7 @@ public abstract class CobbleOwned extends CobbleBase
     @Override
     public UUID getOwnerId()
     {
-        return this.dataSync().get(OWNERID);
+        return this.dataSync().get(_params.OWNERID);
     }
 
     @Override
@@ -67,9 +56,8 @@ public abstract class CobbleOwned extends CobbleBase
     @Override
     public void setOwner(UUID id)
     {
-        var all = this.dataSync().getAll();
-        all.get(OWNERID).setDirty(true);
-        this.dataSync().set(OWNERID, id);
+        this.dataSync().set(_params.OWNERID, id);
+        this._params.sync(this);
     }
 
     @Override

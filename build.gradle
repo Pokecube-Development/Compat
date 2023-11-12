@@ -117,6 +117,9 @@ dependencies {
     //Thut Essentials
     implementation fg.deobf("curse.maven:thutessentials-${version_thutessentials}")
     
+    //Terrafirmacraft
+    //implementation fg.deobf("curse.maven:tfc-${version_terrafirmacraft}")
+    
     // Beyond Earth
     //implementation fg.deobf("curse.maven:beyond_earth-${version_beyond_earth}")
     

@@ -43,15 +43,39 @@ import pokecube.core.utils.CapHolders;
 import pokecube.mod_compat.cobblemon.cobblemobs.ai.Tasks;
 import thut.api.ThutCaps;
 import thut.api.entity.ai.IAIRunnable;
+import thut.api.world.mobs.data.DataSync;
 import thut.core.common.ThutCore;
+import thut.core.common.world.mobs.data.types.Data_String;
+import thut.core.common.world.mobs.data.types.Data_UUID;
 
 public abstract class CobbleBase extends PokemobSaves implements ICapabilitySerializable<CompoundTag>
 {
+    public static class ParamHolder
+    {
+        public int OWNERID;
+        public final int[] MOVES = new int[4];
+
+        public void register(final IPokemob pokemob)
+        {
+            var sync = pokemob.dataSync();
+            OWNERID = sync.register(new Data_UUID(), null);
+            for (int i = 0; i < 4; i++) MOVES[i] = sync.register(new Data_String(), null);
+        }
+
+        public void sync(final IPokemob pokemob)
+        {
+            var all = pokemob.dataSync().getAll();
+            all.get(OWNERID).setDirty(true);
+            for (int i = 0; i < 4; i++) all.get(MOVES[i]).setDirty(true);
+        }
+    }
+
     private final LazyOptional<IPokemob> holder = LazyOptional.of(() -> this);
     private Pokemon cobbled;
     protected PokemonEntity cobblemon;
     private PokedexEntry cobbleEntry = Database.missingno;
     private String[] moves = new String[4];
+    protected ParamHolder _params = new ParamHolder();
 
     public CobbleBase(final PokemonEntity mob)
     {
@@ -72,6 +96,13 @@ public abstract class CobbleBase extends PokemobSaves implements ICapabilitySeri
                 base.copyToForm(cobbleEntry);
             }
         }
+    }
+
+    @Override
+    public void setDataSync(DataSync sync)
+    {
+        super.setDataSync(sync);
+        _params.register(this);
     }
 
     public Pokemon getCobbled()
@@ -250,7 +281,15 @@ public abstract class CobbleBase extends PokemobSaves implements ICapabilitySeri
         var _moves = cobbled.getMoveSet();
         for (int i = 0; i < _moves.getMoves().size() && i < 4; i++)
         {
-            moves[i] = _moves.get(i).getName();
+            if (this.entity.level().isClientSide())
+            {
+                moves[i] = this.dataSync().get(_params.MOVES[i]);
+            }
+            else
+            {
+                moves[i] = _moves.get(i).getName();
+                this.dataSync().set(_params.MOVES[i], moves[i]);
+            }
         }
 
         return moves;
@@ -285,7 +324,7 @@ public abstract class CobbleBase extends PokemobSaves implements ICapabilitySeri
         }
         catch (Exception e)
         {
-            System.out.println(this.getPokedexEntry().getBaseForme()+" "+e);
+            System.out.println(this.getPokedexEntry().getBaseForme() + " " + e);
             return 5;
         }
     }
