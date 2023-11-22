@@ -1,9 +1,9 @@
 package pokecube.mod_compat.minecolonies;
 
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import pokecube.api.events.init.CompatEvent;
+import pokecube.mod_compat.CompatMod;
 
 @Mod.EventBusSubscriber
 public class Compat
@@ -16,6 +16,6 @@ public class Compat
     @SubscribeEvent
     public static void loadComplete(final CompatEvent event)
     {
-        if (ModList.get().isLoaded("minecolonies")) Impl.register();
+        if (CompatMod.config.allowCompat("minecolonies")) Impl.register();
     }
 }

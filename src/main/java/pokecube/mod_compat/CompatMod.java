@@ -9,6 +9,8 @@ import net.minecraftforge.network.NetworkConstants;
 @Mod("pokecube_compat")
 public class CompatMod
 {
+    public static CompatConfig config = CompatConfig.loadConfig();
+
     public CompatMod()
     {
         ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class,

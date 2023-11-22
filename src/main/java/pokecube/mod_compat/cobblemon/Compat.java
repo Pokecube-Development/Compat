@@ -1,9 +1,9 @@
 package pokecube.mod_compat.cobblemon;
 
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import pokecube.api.events.init.CompatEvent;
+import pokecube.mod_compat.CompatMod;
 
 @Mod.EventBusSubscriber
 public class Compat
@@ -16,7 +16,7 @@ public class Compat
     @SubscribeEvent
     public static void register(final CompatEvent event)
     {
-        if (ModList.get().isLoaded("cobblemon")) Impl.register();
+        if (CompatMod.config.allowCompat("cobblemon")) Impl.register();
     }
 
 }
