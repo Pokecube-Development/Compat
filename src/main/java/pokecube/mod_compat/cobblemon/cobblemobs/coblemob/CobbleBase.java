@@ -1,6 +1,8 @@
 package pokecube.mod_compat.cobblemon.cobblemobs.coblemob;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.cobblemon.mod.common.api.pokemon.feature.FlagSpeciesFeature;
@@ -70,6 +72,32 @@ public abstract class CobbleBase extends PokemobSaves implements ICapabilitySeri
         }
     }
 
+    private static Map<String, PokedexEntry> COBBLE_ENTRIES = new HashMap<>();
+
+    public static PokedexEntry fromPokemon(Pokemon input)
+    {
+        return COBBLE_ENTRIES.computeIfAbsent(input.getSpecies().getName(), name -> {
+            var _name = "cobble_" + name;
+            PokedexEntry entry = Database.getEntry(_name);
+            // Incase someone makes a datapack to add the entries.
+            if (entry != null) return entry;
+            // Otherwise make it ourself.
+            entry = new PokedexEntry(0, _name, true);
+            entry.stock = false;
+
+            PokedexEntry base = Database.getEntry(name);
+            if (base == null) base = Database.getEntry(input.getSpecies().getNationalPokedexNumber());
+            if (base == null)
+            {
+                PokecubeAPI.logInfo("Warning, no entry found for {}", name);
+                return Database.missingno;
+            }
+            entry.setBaseForme(base);
+            base.copyToForm(entry);
+            return entry;
+        });
+    }
+
     private final LazyOptional<IPokemob> holder = LazyOptional.of(() -> this);
     private Pokemon cobbled;
     protected PokemonEntity cobblemon;
@@ -117,24 +145,7 @@ public abstract class CobbleBase extends PokemobSaves implements ICapabilitySeri
             return cobbled;
         }
         String name = "cobble_" + cobbled.getSpecies().getName();
-        if (!name.equals(cobbleEntry.getName()))
-        {
-            cobbleEntry = Database.getEntry(name);
-            if (cobbleEntry == null)
-            {
-                cobbleEntry = new PokedexEntry(0, name, true);
-                cobbleEntry.type1 = PokeType.unknown;
-                cobbleEntry.type2 = PokeType.unknown;
-                cobbleEntry.stock = false;
-            }
-            if (cobbleEntry.getBaseForme() == null)
-            {
-                PokedexEntry base = Database.getEntry(cobbled.getSpecies().getName());
-                if (base == null) base = Database.missingno;
-                cobbleEntry.setBaseForme(base);
-                base.copyToForm(cobbleEntry);
-            }
-        }
+        if (!name.equals(cobbleEntry.getName())) cobbleEntry = fromPokemon(cobbled);
         return cobbled;
     }
 
@@ -332,24 +343,12 @@ public abstract class CobbleBase extends PokemobSaves implements ICapabilitySeri
     @Override
     public void read(CompoundTag arg0)
     {
-        String name = arg0.getString("pokedexentry");
-        cobbleEntry = Database.getEntry(name);
-        if (cobbleEntry == null)
-        {
-            cobbleEntry = new PokedexEntry(0, name, true);
-            cobbleEntry.stock = false;
-        }
-        PokedexEntry base = Database.getEntry(name.replaceFirst("cobble_", ""));
-        if (base != null)
-        {
-            cobbleEntry.setBaseForme(base);
-            base.copyToForm(cobbleEntry);
-        }
         if (arg0.contains("Pokemon"))
         {
             CompoundTag pokemon = arg0.getCompound("Pokemon");
-            cobblemon.getPokemon().loadFromNBT(pokemon);
+            (cobbled = cobblemon.getPokemon()).loadFromNBT(pokemon);
             cobblemon.setPersistenceRequired();
+            this.cobbleEntry = fromPokemon(cobblemon.getPokemon());
         }
         super.read(arg0);
     }
@@ -370,7 +369,6 @@ public abstract class CobbleBase extends PokemobSaves implements ICapabilitySeri
     public CompoundTag write()
     {
         CompoundTag tag = super.write();
-        tag.putString("pokedexentry", this.getPokedexEntry().name);
         tag.put("Pokemon", this.getCobbled().saveToNBT(new CompoundTag()));
         return tag;
     }
